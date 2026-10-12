@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client Intake | Travis Tae Oh, PhD</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F7EF;      /* the logo's own ground */
+  --paper: #FFFFFF;
+  --ink: #000000;
+  --charcoal: #3A3A37;
+  --muted: #6E6C64;
+  --rule: #DCDAD0;
+  --gold: #9C7C3C;
+  --gold-soft: #EFE7D3;
+  --error: #A3352B;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Calibri, Carlito, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); text-underline-offset: 3px; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---------- frame ---------- */
+.frame {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+.rail {
+  position: sticky; top: 0; height: 100vh;
+  padding: 40px 32px 32px;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column;
+}
+.brand { display: flex; gap: 14px; align-items: center; }
+.brand img { width: 34px; height: auto; display: block; }
+.brand-name { font-family: var(--serif); font-size: 21px; color: var(--ink); line-height: 1.15; }
+.brand-firm { font-size: 14px; color: var(--muted); margin-top: 2px; }
+.creds { margin: 28px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--muted); line-height: 1.45; }
+.creds li + li { margin-top: 4px; }
+
+.steps { list-style: none; margin: 40px 0 0; padding: 0; counter-reset: step; }
+.steps li { position: relative; }
+.steps button {
+  display: flex; align-items: baseline; gap: 14px; width: 100%;
+  background: none; border: 0; padding: 7px 0; text-align: left; cursor: pointer;
+  color: var(--muted); font-size: 16px;
+}
+.steps button:disabled { cursor: default; }
+.steps .letter { font-family: var(--serif); width: 18px; color: #B4B1A5; font-size: 17px; }
+.steps li.done .letter { color: var(--gold); }
+.steps li.done button { color: var(--charcoal); }
+.steps li.current button { color: var(--ink); font-weight: 700; }
+.steps li.current .letter { color: var(--ink); }
+
+.rail-foot { margin-top: auto; font-size: 14px; color: var(--muted); }
+.rail-foot a { color: var(--charcoal); }
+
+.mobile-bar { display: none; }
+
+/* ---------- main ---------- */
+main { padding: 64px 72px 120px; }
+.screen { max-width: 660px; }
+.screen[hidden] { display: none; }
+.screen.enter { animation: enter .35s ease-out; }
+@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
+
+.section-head { display: grid; grid-template-columns: auto 1fr; column-gap: 28px; align-items: start; margin-bottom: 40px; }
+.section-letter {
+  font-family: var(--serif); font-size: 112px; line-height: .8; color: var(--gold);
+  padding-top: 6px;
+}
+.section-kicker { font-size: 15px; color: var(--muted); }
+h1, h2 { font-family: var(--serif); font-weight: 400; color: var(--ink); margin: 0; }
+h1 { font-size: 46px; line-height: 1.1; letter-spacing: -0.01em; }
+h2 { font-size: 36px; line-height: 1.15; letter-spacing: -0.005em; margin-top: 4px; }
+.section-intro { margin: 14px 0 0; font-size: 17px; color: var(--charcoal); max-width: 52ch; }
+
+/* welcome */
+.welcome .for { font-size: 16px; color: var(--muted); margin: 0 0 18px; }
+.welcome .for strong { color: var(--ink); }
+.note { margin: 36px 0 0; font-family: var(--serif); font-size: 19px; line-height: 1.65; color: var(--charcoal); max-width: 56ch; }
+.note p { margin: 0 0 16px; }
+.signoff { margin-top: 28px; display: flex; align-items: center; gap: 14px; }
+.signoff .rule { width: 32px; height: 1px; background: var(--gold); }
+.signoff .who { font-family: var(--serif); color: var(--ink); font-size: 18px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 40px 0 0; padding: 20px 0 0; border-top: 1px solid var(--rule); font-size: 16px; }
+.facts div span { display: block; color: var(--muted); font-size: 14px; }
+.facts div b { color: var(--ink); font-weight: 700; }
+
+/* questions */
+.q { padding: 26px 0; border-top: 1px solid var(--rule); }
+.q:first-of-type { border-top: 0; padding-top: 0; }
+.q[hidden] { display: none; }
+.q-label { display: flex; gap: 14px; align-items: baseline; margin: 0 0 12px; }
+.q-id { font-family: var(--serif); color: var(--gold); font-size: 16px; min-width: 26px; }
+.q-text { color: var(--ink); font-size: 19px; line-height: 1.4; }
+.q.req .q-text { font-weight: 700; }
+.tag { font-size: 13px; color: var(--gold); white-space: nowrap; margin-left: 6px; font-weight: 400; }
+.tag.opt { color: var(--muted); }
+.q-help { margin: -4px 0 12px 40px; font-size: 15px; color: var(--muted); }
+.q-body { margin-left: 40px; }
+
+input[type=text], input[type=email], input[type=url], textarea {
+  width: 100%; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 11px 13px; font-size: 17px; line-height: 1.4;
+  transition: border-color .15s;
+}
+textarea { min-height: 96px; resize: vertical; }
+input::placeholder, textarea::placeholder { color: #A9A69B; }
+input:hover, textarea:hover { border-color: #C6C3B6; }
+input:focus, textarea:focus { outline: none; border-color: var(--ink); }
+.field + .field { margin-top: 12px; }
+.field label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end; }
+.field label .tag { font-size: 13px; }
+
+.choices { display: grid; gap: 8px; }
+.choice {
+  display: flex; gap: 12px; align-items: center;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 11px 14px; cursor: pointer; font-size: 17px;
+  transition: border-color .15s, background .15s;
+}
+.choice:hover { border-color: #C6C3B6; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice .mark {
+  flex: none; width: 18px; height: 18px; border: 1.5px solid #B4B1A5; background: var(--paper);
+  display: grid; place-items: center;
+}
+.choice .mark.radio { border-radius: 50%; }
+.choice .mark.check { border-radius: 3px; }
+.choice input:checked ~ .mark { border-color: var(--ink); background: var(--ink); }
+.choice input:checked ~ .mark::after { content: ""; width: 6px; height: 6px; background: var(--paper); border-radius: 50%; }
+.choice input:checked ~ .mark.check::after { width: 9px; height: 5px; background: none; border-radius: 0; border-left: 2px solid var(--paper); border-bottom: 2px solid var(--paper); transform: translateY(-1px) rotate(-45deg); }
+.choice:has(input:checked) { border-color: var(--ink); }
+.choice:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.choice .letter { color: var(--muted); width: 16px; }
+.other-input { margin-top: 8px; }
+.other-input[hidden] { display: none; }
+
+.q.invalid input[type=text], .q.invalid input[type=email], .q.invalid textarea, .q.invalid .choice { border-color: var(--error); }
+.err { display: none; margin: 10px 0 0 40px; font-size: 15px; color: var(--error); }
+.q.invalid .err { display: block; }
+
+/* access checklist */
+.access { margin: 0; padding: 0; list-style: none; counter-reset: acc; }
+.access li { padding: 22px 0; border-top: 1px solid var(--rule); }
+.access li:first-child { border-top: 0; padding-top: 0; }
+.acc-title { color: var(--ink); font-weight: 700; font-size: 18px; }
+.acc-steps { margin: 4px 0 12px; font-size: 16px; color: var(--charcoal); }
+.acc-steps .path { white-space: nowrap; }
+.copy { background: var(--gold-soft); border: 0; border-radius: 3px; padding: 1px 8px; font-size: 15px; cursor: pointer; color: var(--ink); }
+.copy:hover { background: #E6DBC0; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--paper); }
+.seg label { cursor: pointer; padding: 7px 14px; font-size: 15px; border-left: 1px solid var(--rule); }
+.seg label:first-of-type { border-left: 0; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { background: var(--ink); color: var(--paper); }
+.seg label:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: -2px; }
+.assure { margin: 0 0 28px; padding: 14px 18px; border-left: 2px solid var(--gold); background: var(--gold-soft); font-size: 16px; color: var(--charcoal); max-width: 60ch; }
+
+/* nav */
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--rule); }
+.btn {
+  border: 1px solid var(--ink); border-radius: 4px; padding: 13px 26px; font-size: 17px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px; transition: background .15s, color .15s;
+}
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.primary:hover { background: var(--charcoal); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: transparent; padding-left: 0; }
+.btn.ghost:hover { text-decoration: underline; text-underline-offset: 4px; }
+.btn svg { width: 16px; height: 16px; }
+.btn[disabled] { opacity: .5; cursor: wait; }
+.saved { font-size: 14px; color: var(--muted); }
+
+/* done */
+.done-mark { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--gold); display: grid; place-items: center; margin-bottom: 28px; }
+.done-mark svg { width: 24px; height: 24px; stroke: var(--gold); }
+.preview-note { margin-top: 32px; font-size: 14px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 14px; }
+
+/* ---------- small screens ---------- */
+@media (max-width: 900px) {
+  .frame { grid-template-columns: 1fr; }
+  .rail { display: none; }
+  .mobile-bar {
+    display: block; position: sticky; top: 0; z-index: 5; background: var(--cream);
+    border-bottom: 1px solid var(--rule); padding: 14px 16px 12px;
+  }
+  .mobile-bar .brand img { width: 22px; }
+  .mobile-bar .brand-name { font-size: 17px; }
+  .mobile-progress { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .bar { height: 2px; background: var(--rule); margin-top: 6px; }
+  .bar i { display: block; height: 100%; background: var(--gold); width: 0; transition: width .3s; }
+  main { padding: 32px 16px 80px; }
+  h1 { font-size: 34px; }
+  h2 { font-size: 28px; }
+  .section-head { column-gap: 18px; margin-bottom: 28px; }
+  .section-letter { font-size: 72px; }
+  .q-body, .q-help, .err { margin-left: 0; }
+  .q-label { gap: 10px; }
+  .pair { grid-template-columns: 1fr; }
+  .note { font-size: 18px; }
+  .nav { position: sticky; bottom: 0; background: var(--cream); margin-left: -16px; margin-right: -16px; padding: 14px 16px; }
+  .btn { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <aside class="rail" aria-label="Progress">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="Apex Solution Consulting">
+      <div>
+        <div class="brand-name">Travis Tae Oh, PhD</div>
+        <div class="brand-firm">Apex Solution Consulting</div>
+      </div>
+    </div>
+    <ul class="creds">
+      <li>PhD in Marketing, Columbia University</li>
+      <li>400+ research and consulting projects</li>
+    </ul>
+    <ol class="steps" id="steps"></ol>
+    <div class="rail-foot">
+      Questions? Email <a href="mailto:travis.oh@apexsolutionconsulting.com">travis.oh@apexsolutionconsulting.com</a>
+    </div>
+  </aside>
+
+  <div>
+    <div class="mobile-bar">
+      <div class="brand">
+        <img src="data:image/png;base64,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" alt="">
+        <div class="brand-name">Travis Tae Oh, PhD</div>
+      </div>
+      <div class="mobile-progress"><span id="mStep">Welcome</span><span id="mCount"></span></div>
+      <div class="bar"><i id="mBar"></i></div>
+    </div>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIG — the only part you edit to deploy
+   ===================================================================== */
+const CONFIG = {
+  // Google Apps Script web app URL. Leave empty to run in preview mode.
+  endpoint: "",
+  contactEmail: "travis.oh@apexsolutionconsulting.com",
+  auditorEmail: "travis.oh@apexsolutionconsulting.com",
+  metaPortfolioId: "",           // Apex's Meta Business portfolio ID, once created
+  formVersion: "2026-10-11"
+};
+
+/* =====================================================================
+   QUESTIONS — mirrors the Client Intake Questionnaire doc.
+   req: true  = bold in the doc (required)
+   opt: true  = marked "(optional)" in the doc
+   leads: true = shown only when P3 includes booking or quote/inquiry
+   ===================================================================== */
+const SECTIONS = [
+  { id: "P", title: "About your business", questions: [
+    { id: "P1", req: true, type: "group", text: "Your name, role, and email.", fields: [
+      { key: "name", label: "Name", req: true, half: true },
+      { key: "role", label: "Role", half: true },
+      { key: "email", label: "Email", req: true, input: "email" } ] },
+    { id: "P2", req: true, type: "group", text: "Business name and website.", fields: [
+      { key: "business", label: "Business name", req: true, half: true },
+      { key: "website", label: "Website", req: true, half: true, placeholder: "example.com" } ] },
+    { id: "P3", req: true, type: "multi", text: "How do customers usually purchase from you?", help: "Select all that apply.", options: [
+      "Online checkout", "Book an appointment, stay, or class", "Request a quote or submit an inquiry", "Visit a physical location", { label: "Other (please specify)", other: true } ] }
+  ]},
+  { id: "A", title: "Business and goals", questions: [
+    { id: "A1", req: true, type: "long", text: "What do you sell, and which product or service matters most to grow right now?" },
+    { id: "A2", req: true, type: "single", text: "What is the single most important outcome you want paid ads to produce over the next 6 months?", options: [
+      "More new customers", "More revenue from existing customers", "Lower cost per customer at the current volume", "Growth into a new location, service, or market", { label: "Other (please specify)", other: true } ] }
+  ]},
+  { id: "B", title: "Unit economics", intro: "These answers set the break-even line every campaign is judged against. Ranges are fine; a rough number today beats a precise number in two weeks.", questions: [
+    { id: "B1", req: true, type: "short", text: "What does a typical first purchase or booking bring in?", help: "Average order or first-visit value.", placeholder: "e.g., $60" },
+    { id: "B2", req: true, type: "short", text: "Roughly what share of that is gross margin after direct costs?", placeholder: "e.g., 55%" },
+    { id: "B3", req: true, type: "short", text: "Over 12 months, what is a typical customer worth?", help: "Include repeat visits, packages, memberships, or subscriptions.", placeholder: "e.g., $400" },
+    { id: "B4", leads: true, type: "short", text: "What share of new inquiries become paying customers?", placeholder: "e.g., about 1 in 3" },
+    { id: "B5", type: "short", text: "What is the most you would pay to acquire one new customer and still be happy?" },
+    { id: "B6", type: "long", text: "Total monthly ad spend today, split by platform if known.", placeholder: "e.g., Google $3,000, Meta $1,500" }
+  ]},
+  { id: "C", title: "Customers and conversions", questions: [
+    { id: "C1", req: true, type: "long", text: "Who is your best customer? Describe them in a sentence or two." },
+    { id: "C2", req: true, type: "multi", text: "What action counts as a real win?", help: "Select all that apply.", options: [
+      "Online purchase", "Booked and paid appointment or stay", "Form submission or inquiry", "Phone call", { label: "Other (please specify)", other: true } ] },
+    { id: "C3", req: true, leads: true, type: "short", text: "Where do bookings and inquiries end up? Name the booking system or CRM." },
+    { id: "C4", type: "long", text: "How do new customers say they found you? Name the top two or three answers." }
+  ]},
+  { id: "D", title: "Current agency and reporting", questions: [
+    { id: "D1", req: true, type: "short", text: "Who manages your ads today, and since when?", placeholder: "e.g., Acme Digital, since 2024" },
+    { id: "D2", req: true, type: "single", text: "Who owns the ad accounts: your business or the agency?", help: "Check whether the account is under your own login or theirs.", options: [
+      "Our business", "The agency", "Not sure" ] },
+    { id: "D3", req: true, type: "long", text: "What does your monthly report show, and which numbers do you watch most?", help: "If you can, email the last 2 to 3 reports to " + "travis.oh@apexsolutionconsulting.com" + "." },
+    { id: "D4", type: "long", text: "What is working well with the current setup?" },
+    { id: "D5", type: "long", text: "What feels unclear or disappointing in regards to paid media management?" },
+    { id: "D6", opt: true, type: "long", text: "Have any big changes happened in the last 12 months?", help: "For example a new agency, budget shifts, new campaign types, or a website rebuild." }
+  ]},
+  { id: "E", title: "Measurement and tech stack", intro: "Most people don't know these offhand. “Not sure” is a useful answer, because it tells us where to look first.", questions: [
+    { id: "E1", req: true, type: "single", text: "What is your website built on?", options: [
+      "Shopify", "WordPress", "Wix", "Squarespace", { label: "Other (please specify)", other: true }, "Not sure" ] },
+    { id: "E2", req: true, type: "short", text: "Is Google Analytics 4 installed, and who has admin access?" },
+    { id: "E3", type: "short", text: "Is the Meta Pixel installed? Is the Conversions API set up?" },
+    { id: "E4", type: "short", text: "Do you track phone calls from ads? Which tool, if any?" },
+    { id: "E5", leads: true, type: "short", text: "Does your booking system send booking data back to Google or Meta?" },
+    { id: "E6", type: "short", text: "Do you have a Google Business Profile, and who manages it?" },
+    { id: "E7", opt: true, type: "short", text: "Is there an email or customer list we could use for audience matching? Roughly how many contacts?" }
+  ]},
+  { id: "F", title: "Channels, history, and creative", questions: [
+    { id: "F1", type: "multi", text: "Which channels are you advertising on today?", help: "Select all that apply.", options: [
+      "Google Search", "Google Performance Max", "YouTube", "Meta (Facebook and Instagram)", "Local Services Ads", { label: "Other (please specify)", other: true } ] },
+    { id: "F2", type: "long", text: "Who makes your ad photos, videos, and copy?" },
+    { id: "F3", type: "long", text: "Are there words, claims, offers, or competitors that ads must avoid?" },
+    { id: "F4", type: "short", text: "Do you run promotions or discounts? How often?" },
+    { id: "F5", type: "short", text: "Who are your top two or three competitors?" }
+  ]},
+  { id: "G", title: "Access checklist", access: true }
+];
+
+const ACCESS = [
+  { id: "G1", title: "Google Ads", steps: 'Admin → Access and security → + → add <span class="copyable"></span> with the <b>Read only</b> role.' },
+  { id: "G2", title: "Meta", steps: 'Business Settings → Partners → add Apex’s Business portfolio ID <span class="metaid"></span> → assign the ad account with view-performance access only.' },
+  { id: "G3", title: "Google Analytics 4", steps: 'Admin → Property access management → + → add <span class="copyable"></span> as <b>Viewer</b>.' },
+  { id: "G4", title: "Booking system or store data", steps: "An export of the last 12 months of orders or new customers, with date, value, and source if recorded." },
+  { id: "G5", title: "Agency reports", steps: "The last 2 to 3 monthly reports, emailed to " + CONFIG.contactEmail + "." },
+  { id: "G6", title: "Account ownership", steps: "Confirm your business, not the agency, is the admin on each account." }
+];
+const ACCESS_STATUS = ["Done", "I’ll do it", "Need help"];
+
+/* =====================================================================
+   State
+   ===================================================================== */
+const params = new URLSearchParams(location.search);
+const clientSlug = (params.get("client") || "").trim().toLowerCase().replace(/[^a-z0-9-_]/g, "");
+const clientName = (params.get("name") || "").trim() ||
+  (clientSlug ? clientSlug.replace(/[-_]+/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "");
+const STORE_KEY = "apex-intake:" + (clientSlug || "general");
+
+let answers = {};
+let step = 0; // 0 = welcome, 1..SECTIONS.length = sections, last+1 = done
+try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); if (s) { answers = s.answers || {}; step = Math.min(s.step || 0, SECTIONS.length); } } catch (e) {}
+let furthest = step;
+
+function persist() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ answers, step })); flashSaved(); } catch (e) {}
+}
+let savedTimer;
+function flashSaved() {
+  const el = document.querySelector(".saved");
+  if (!el) return;
+  el.textContent = "Saved on this device";
+  clearTimeout(savedTimer);
+  savedTimer = setTimeout(() => { el.textContent = ""; }, 1600);
+}
+
+const leadsOn = () => {
+  const p3 = answers.P3 || [];
+  return p3.includes("Book an appointment, stay, or class") || p3.includes("Request a quote or submit an inquiry");
+};
+const visible = q => !q.leads || leadsOn();
+
+/* =====================================================================
+   Rendering
+   ===================================================================== */
+const main = document.getElementById("main");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const arrow = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+const back = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>';
+
+function renderRail() {
+  const ol = document.getElementById("steps");
+  ol.innerHTML = SECTIONS.map((s, i) => {
+    const n = i + 1;
+    const cls = n === step ? "current" : (n < furthest ? "done" : "");
+    return `<li class="${cls}"><button type="button" data-go="${n}" ${n > furthest ? "disabled" : ""}><span class="letter">${s.id}</span><span>${esc(s.title)}</span></button></li>`;
+  }).join("");
+  ol.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => go(+b.dataset.go)));
+  const mStep = document.getElementById("mStep"), mCount = document.getElementById("mCount"), mBar = document.getElementById("mBar");
+  if (step === 0) { mStep.textContent = "Welcome"; mCount.textContent = ""; }
+  else if (step > SECTIONS.length) { mStep.textContent = "Submitted"; mCount.textContent = ""; }
+  else { mStep.textContent = SECTIONS[step - 1].title; mCount.textContent = step + " of " + SECTIONS.length; }
+  mBar.style.width = (Math.min(step, SECTIONS.length) / SECTIONS.length * 100) + "%";
+}
+
+function renderWelcome() {
+  const resumed = Object.keys(answers).length > 0;
+  return `<section class="screen welcome">
+    ${clientName ? `<p class="for">Prepared for <strong>${esc(clientName)}</strong></p>` : ""}
+    <h1>Paid media performance audit: client intake</h1>
+    <div class="note">
+      <p>Thank you for taking the time. These questions help me understand how your business makes money and how your advertising is set up today, so the audit measures what actually matters to you rather than what is easy to report.</p>
+      <p>Rough answers are completely fine, and anything you don't know is useful too. Your progress saves on this device, so you can stop and come back.</p>
+      <div class="signoff"><span class="rule"></span><span class="who">Travis Tae Oh, PhD</span></div>
+    </div>
+    <div class="facts">
+      <div><span>Time</span><b>About 15 minutes</b></div>
+      <div><span>Sections</span><b>${SECTIONS.length}, one per page</b></div>
+      <div><span>Your answers</span><b>Kept confidential</b></div>
+    </div>
+    <div class="nav">
+      <span class="saved"></span>
+      <button class="btn primary" type="button" id="next">${resumed ? "Continue where you left off" : "Begin"} ${arrow}</button>
+    </div>
+  </section>`;
+}
+
+function renderQuestion(q) {
+  const tag = q.req ? '<span class="tag">Required</span>' : '<span class="tag opt">Optional</span>';
+  let body = "";
+  const val = answers[q.id];
+  if (q.type === "short") {
+    body = `<input type="text" data-q="${q.id}" value="${esc(val || "")}" placeholder="${esc(q.placeholder || "")}" aria-labelledby="${q.id}-label">`;
+  } else if (q.type === "long") {
+    body = `<textarea data-q="${q.id}" placeholder="${esc(q.placeholder || "")}" aria-labelledby="${q.id}-label">${esc(val || "")}</textarea>`;
+  } else if (q.type === "group") {
+    const v = val || {};
+    const halves = q.fields.filter(f => f.half), fulls = q.fields.filter(f => !f.half);
+    const field = f => `<div class="field"><label for="${q.id}-${f.key}">${esc(f.label)}${f.req ? "" : ' <span class="tag opt">Optional</span>'}</label>
+      <input id="${q.id}-${f.key}" type="${f.input || "text"}" data-q="${q.id}" data-key="${f.key}" value="${esc(v[f.key] || "")}" placeholder="${esc(f.placeholder || "")}" ${f.input === "email" ? 'autocomplete="email"' : ""}></div>`;
+    body = (halves.length ? `<div class="pair">${halves.map(field).join("")}</div>` : "") + fulls.map(f => `<div style="margin-top:12px">${field(f)}</div>`).join("");
+  } else if (q.type === "single" || q.type === "multi") {
+    const multi = q.type === "multi";
+    const sel = multi ? (val || []) : val;
+    const otherVal = answers[q.id + "_other"] || "";
+    let otherOn = false;
+    const opts = q.options.map((o, i) => {
+      const label = typeof o === "string" ? o : o.label;
+      const checked = multi ? sel.includes(label) : sel === label;
+      if (o.other && checked) otherOn = true;
+      return `<label class="choice"><input type="${multi ? "checkbox" : "radio"}" name="${q.id}" value="${esc(label)}" data-q="${q.id}" ${checked ? "checked" : ""} ${o.other ? "data-other" : ""}>
+        <span class="mark ${multi ? "check" : "radio"}"></span><span class="letter">${String.fromCharCode(97 + i)}.</span><span>${esc(label)}</span></label>`;
+    }).join("");
+    const hasOther = q.options.some(o => o.other);
+    body = `<div class="choices" role="${multi ? "group" : "radiogroup"}" aria-labelledby="${q.id}-label">${opts}</div>` +
+      (hasOther ? `<input class="other-input" type="text" data-q="${q.id}_other" value="${esc(otherVal)}" placeholder="Please specify" ${otherOn ? "" : "hidden"}>` : "");
+  }
+  return `<div class="q ${q.req ? "req" : ""}" data-qid="${q.id}" ${visible(q) ? "" : "hidden"}>
+    <div class="q-label" id="${q.id}-label"><span class="q-id">${q.id}</span><span class="q-text">${esc(q.text)}${tag}</span></div>
+    ${q.help ? `<p class="q-help">${esc(q.help)}</p>` : ""}
+    <div class="q-body">${body}</div>
+    <p class="err" role="alert">Answer this question to continue.</p>
+  </div>`;
+}
+
+function renderAccess(sec) {
+  const email = CONFIG.auditorEmail;
+  const items = ACCESS.map(a => {
+    const cur = answers[a.id] || "";
+    const seg = ACCESS_STATUS.map(s => `<label><input type="radio" name="${a.id}" value="${esc(s)}" data-q="${a.id}" ${cur === s ? "checked" : ""}>${esc(s)}</label>`).join("");
+    return `<li><div class="acc-title">${esc(a.title)}</div><div class="acc-steps">${a.steps}</div>
+      <div class="seg" role="radiogroup" aria-label="${esc(a.title)} status">${seg}</div></li>`;
+  }).join("");
+  return `<div class="assure">All access is view-only. Nothing in your accounts will be changed during the audit, and your current agency's work continues as normal.</div>
+    <ol class="access">${items}</ol>`.replace(/<span class="copyable"><\/span>/g,
+      `<b>${esc(email)}</b> <button type="button" class="copy" data-copy="${esc(email)}">Copy</button>`)
+    .replace(/<span class="metaid"><\/span>/g, CONFIG.metaPortfolioId ? `<b>${esc(CONFIG.metaPortfolioId)}</b>` : "(sent to you by email)");
+}
+
+function renderSection(i) {
+  const sec = SECTIONS[i - 1];
+  const last = i === SECTIONS.length;
+  const content = sec.access ? renderAccess(sec) : sec.questions.map(renderQuestion).join("");
+  return `<section class="screen">
+    <div class="section-head">
+      <div class="section-letter" aria-hidden="true">${sec.id}</div>
+      <div>
+        <div class="section-kicker">Section ${i} of ${SECTIONS.length}</div>
+        <h2>${esc(sec.title)}</h2>
+        ${sec.intro ? `<p class="section-intro">${esc(sec.intro)}</p>` : ""}
+      </div>
+    </div>
+    <form novalidate onsubmit="return false">${content}</form>
+    <div class="nav">
+      <button class="btn ghost" type="button" id="prev">${back} Back</button>
+      <span class="saved"></span>
+      <button class="btn primary" type="button" id="next">${last ? "Submit intake" : "Next"} ${last ? "" : arrow}</button>
+    </div>
+  </section>`;
+}
+
+function renderDone(preview) {
+  const name = (answers.P1 && answers.P1.name) ? answers.P1.name.split(" ")[0] : "";
+  return `<section class="screen">
+    <div class="done-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h1>${name ? "Thank you, " + esc(name) + "." : "Thank you."}</h1>
+    <div class="note">
+      <p>Your intake has been submitted. I'll review your answers before we speak and come back with any follow-up questions.</p>
+      <p>Anything marked "Need help" on the access checklist, we can set up together. If something comes to mind in the meantime, email <a href="mailto:${CONFIG.contactEmail}">${CONFIG.contactEmail}</a>.</p>
+      <div class="signoff"><span class="rule"></span><span class="who">Travis Tae Oh, PhD</span></div>
+    </div>
+    ${preview ? `<p class="preview-note">Preview mode: not yet connected to a Google Sheet, so nothing was sent. <a href="#" id="dl">Download these answers</a> to check the data format.</p>` : ""}
+  </section>`;
+}
+
+function render(preview) {
+  if (step === 0) main.innerHTML = renderWelcome();
+  else if (step > SECTIONS.length) main.innerHTML = renderDone(preview);
+  else main.innerHTML = renderSection(step);
+  const scr = main.querySelector(".screen");
+  scr.classList.add("enter");
+  renderRail();
+  bind();
+}
+
+/* =====================================================================
+   Behaviour
+   ===================================================================== */
+function bind() {
+  main.querySelectorAll("[data-q]").forEach(el => {
+    const ev = (el.type === "radio" || el.type === "checkbox") ? "change" : "input";
+    el.addEventListener(ev, () => onChange(el));
+  });
+  main.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+    const t = b.dataset.copy;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(
+      () => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1400); },
+      () => { b.textContent = "Select and copy"; });
+  }));
+  const next = document.getElementById("next"), prev = document.getElementById("prev");
+  if (next) next.addEventListener("click", onNext);
+  if (prev) prev.addEventListener("click", () => go(step - 1));
+  const dl = document.getElementById("dl");
+  if (dl) dl.addEventListener("click", e => { e.preventDefault(); download(); });
+}
+
+function onChange(el) {
+  const id = el.dataset.q;
+  if (el.dataset.key) {
+    answers[id] = Object.assign({}, answers[id], { [el.dataset.key]: el.value });
+  } else if (el.type === "checkbox") {
+    const set = new Set(answers[id] || []);
+    el.checked ? set.add(el.value) : set.delete(el.value);
+    answers[id] = [...set];
+  } else {
+    answers[id] = el.value;
+  }
+  if (el.type === "checkbox" || el.type === "radio") {
+    const other = main.querySelector(`[data-q="${id}_other"]`);
+    if (other) {
+      const on = !!main.querySelector(`input[name="${id}"][data-other]:checked`);
+      other.hidden = !on;
+      if (on && el.hasAttribute("data-other") && el.checked) other.focus();
+    }
+  }
+  const q = el.closest(".q");
+  if (q && q.classList.contains("invalid") && isAnswered(findQ(q.dataset.qid))) q.classList.remove("invalid");
+  persist();
+}
+
+function findQ(id) { for (const s of SECTIONS) for (const q of (s.questions || [])) if (q.id === id) return q; }
+
+function isAnswered(q) {
+  const v = answers[q.id];
+  if (q.type === "group") {
+    return q.fields.every(f => !f.req || (v && String(v[f.key] || "").trim() &&
+      (f.input !== "email" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v[f.key].trim()))));
+  }
+  if (q.type === "multi") return Array.isArray(v) && v.length > 0;
+  return !!(v && String(v).trim());
+}
+
+function onNext() {
+  if (step === 0) return go(1);
+  const sec = SECTIONS[step - 1];
+  let firstBad = null;
+  (sec.questions || []).forEach(q => {
+    const el = main.querySelector(`.q[data-qid="${q.id}"]`);
+    const bad = q.req && visible(q) && !isAnswered(q);
+    el.classList.toggle("invalid", bad);
+    if (bad && !firstBad) firstBad = el;
+  });
+  if (firstBad) {
+    const errP = firstBad.querySelector(".err");
+    if (firstBad.dataset.qid === "P1") errP.textContent = "Add your name and a valid email to continue.";
+    firstBad.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    const f = firstBad.querySelector("input, textarea"); if (f) f.focus({ preventScroll: true });
+    return;
+  }
+  if (step === SECTIONS.length) return submit();
+  go(step + 1);
+}
+
+function go(n) {
+  step = Math.max(0, n);
+  furthest = Math.max(furthest, step);
+  persist();
+  render();
+  window.scrollTo(0, 0);
+  const h = main.querySelector("h1, h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+
+function payload() {
+  const out = { client: clientSlug || "general", client_name: clientName, submitted_at: new Date().toISOString(), form_version: CONFIG.formVersion };
+  for (const s of SECTIONS) {
+    if (s.access) { for (const a of ACCESS) out[a.id] = answers[a.id] || ""; continue; }
+    for (const q of s.questions) {
+      const v = visible(q) ? answers[q.id] : "";
+      if (q.type === "group") for (const f of q.fields) out[q.id + "_" + f.key] = (v && v[f.key]) || "";
+      else out[q.id] = Array.isArray(v) ? v.join("; ") : (v || "");
+      if (q.options && q.options.some(o => o.other)) out[q.id + "_other"] = visible(q) ? (answers[q.id + "_other"] || "") : "";
+    }
+  }
+  return out;
+}
+
+async function submit() {
+  const btn = document.getElementById("next");
+  const data = payload();
+  if (!CONFIG.endpoint) {
+    window.__lastPayload = data;
+    step = SECTIONS.length + 1; furthest = step;
+    render(true); window.scrollTo(0, 0);
+    return;
+  }
+  btn.disabled = true; btn.textContent = "Submitting…";
+  try {
+    await fetch(CONFIG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    step = SECTIONS.length + 1; furthest = step;
+    render(false); window.scrollTo(0, 0);
+  } catch (e) {
+    btn.disabled = false; btn.textContent = "Submit intake";
+    alert("The form couldn't reach the server. Check your connection and select Submit intake again. Your answers are saved on this device.");
+  }
+}
+
+function download() {
+  const blob = new Blob([JSON.stringify(window.__lastPayload || payload(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "intake-" + (clientSlug || "general") + ".json";
+  a.click();
+}
+
+render();
+</script>
+</body>
+</html>
